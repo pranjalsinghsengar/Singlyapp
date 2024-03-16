@@ -2,15 +2,13 @@ import React, {useState} from 'react';
 import {
   View,
   Text,
-  Button,
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
   Image,
   Modal
 } from 'react-native';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {launchCamera} from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const Photo = ({navigation}) => {
   const [photos, setPhotos] = useState([]);
@@ -56,26 +54,17 @@ const Photo = ({navigation}) => {
       }
     });
   };
-   const handleCameraLaunch = () => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false,
-      maxHeight: 2000,
-      maxWidth: 2000,
-    };
-
-    launchCamera(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled camera');
-      } else if (response.error) {
-        console.log('Camera Error: ', response.error);
-      } else {
-        let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri);
-        console.log(imageUri);
-      }
-    });
-  };
+   const handleCameraLaunch =  async () => {
+  await ImagePicker.openCamera({
+    width: 300,
+    height: 400,
+    cropping: true,
+  }).then(image => {
+    console.log(image);
+  });
+      };
+  
+ 
   return (
     <ImageBackground
       source={require('./img/bgsingly.jpg')}
@@ -109,7 +98,7 @@ const Photo = ({navigation}) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.dropdownItem}
-                onPress={() => setIsDropdownVisible(false)}>
+                onPress={handleCameraLaunch}>
                 <Text style={styles.dropdownText}>CAMERA</Text>
               </TouchableOpacity>
             </View>
